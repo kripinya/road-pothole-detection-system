@@ -203,10 +203,10 @@ severity_score = (
 
 | Score Range | Severity | Color |
 |-------------|----------|-------|
-| 0 - 25 | Low | 🟢 Green |
-| 26 - 50 | Medium | 🟡 Yellow |
-| 51 - 75 | High | 🟠 Orange |
-| 76 - 100 | Critical | 🔴 Red |
+| 0 - 25 | Low | Green |
+| 26 - 50 | Medium | Yellow |
+| 51 - 75 | High | Orange |
+| 76 - 100 | Critical | Red |
 
 **Output Schema:**
 ```json

@@ -38,13 +38,13 @@ graph TB
         UC13["UC-13: Generate LLM Report"]
     end
 
-    FO["🧑 Field Operator"]
-    MA["👔 Municipal Admin"]
-    SA["🔧 System Admin"]
-    VW["👁 Viewer"]
-    AI["🤖 Agentic AI"]
-    ML["⚙️ ML Service"]
-    LLM["🧠 Ollama LLM"]
+    FO["Field Operator"]
+    MA["Municipal Admin"]
+    SA["System Admin"]
+    VW["Viewer"]
+    AI["Agentic AI"]
+    ML["ML Service"]
+    LLM["Ollama LLM"]
 
     FO --> UC1
     FO --> UC2
@@ -139,7 +139,7 @@ graph TB
 | **Actor** | All human actors |
 | **Precondition** | User is authenticated; detections with GPS data exist |
 | **Trigger** | User navigates to Map page |
-| **Main Flow** | 1. System fetches all detection locations as GeoJSON<br>2. Map renders with OpenStreetMap tiles<br>3. Markers are color-coded: 🟢 Low, 🟡 Medium, 🟠 High, 🔴 Critical<br>4. Nearby markers are clustered at lower zoom levels<br>5. User can toggle heatmap layer<br>6. User clicks marker → popup shows detection summary<br>7. User can filter markers by severity/status |
+| **Main Flow** | 1. System fetches all detection locations as GeoJSON<br>2. Map renders with OpenStreetMap tiles<br>3. Markers are color-coded: Low, Medium, High, Critical<br>4. Nearby markers are clustered at lower zoom levels<br>5. User can toggle heatmap layer<br>6. User clicks marker → popup shows detection summary<br>7. User can filter markers by severity/status |
 | **Postcondition** | User has visual understanding of pothole distribution |
 
 ### UC-06: View Dashboard Analytics
