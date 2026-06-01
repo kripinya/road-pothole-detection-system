@@ -12,10 +12,10 @@
 
 | Criteria | YOLOv8 | Faster R-CNN | SSD | EfficientDet |
 |----------|--------|-------------|-----|-------------|
-| **Inference Speed** |  (~10ms GPU) |  (~80ms GPU) |  (~15ms GPU) |  (~30ms GPU) |
-| **Accuracy (mAP)** |  |  |  |  |
-| **Ease of Fine-tuning** |  |  |  |  |
-| **Community/Docs** |  |  |  |  |
+| **Inference Speed** | 5/5 (~10ms GPU) | 2/5 (~80ms GPU) | 4/5 (~15ms GPU) | 3/5 (~30ms GPU) |
+| **Accuracy (mAP)** | 4/5 | 5/5 | 3/5 | 4/5 |
+| **Ease of Fine-tuning** | 5/5 | 2/5 | 3/5 | 3/5 |
+| **Community/Docs** | 5/5 | 4/5 | 3/5 | 3/5 |
 | **Export Formats** | ONNX, TensorRT, CoreML | Limited | Limited | TFLite |
 
 **Decision:** YOLOv8 — best balance of speed, accuracy, and developer experience. Ultralytics provides a one-line training API, built-in augmentation, and export to multiple deployment formats. Critical for real-time pothole detection where inference speed directly impacts user experience.
@@ -24,11 +24,11 @@
 
 | Criteria | Ollama (Local) | OpenAI API | Google Gemini API | Hugging Face Transformers |
 |----------|---------------|------------|-------------------|--------------------------|
-| **Cost** |  (Free) |  (Pay per token) |  (Free tier limited) |  (Free, self-hosted) |
-| **Privacy** |  (All local) |  (Data sent to cloud) |  (Data sent to cloud) |  (All local) |
-| **Ease of Setup** |  (Docker image) |  (API key) |  (API key) |  (Complex setup) |
-| **Offline Capable** |  |  |  |  |
-| **Docker Integration** |  (Official image) | N/A | N/A |  (Heavy images) |
+| **Cost** | 5/5 (Free) | 2/5 (Pay per token) | 3/5 (Free tier limited) | 4/5 (Free, self-hosted) |
+| **Privacy** | 5/5 (All local) | 1/5 (Data sent to cloud) | 1/5 (Data sent to cloud) | 5/5 (All local) |
+| **Ease of Setup** | 5/5 (Docker image) | 4/5 (API key) | 4/5 (API key) | 2/5 (Complex setup) |
+| **Offline Capable** | 5/5 | 1/5 | 1/5 | 5/5 |
+| **Docker Integration** | 5/5 (Official image) | N/A | N/A | 2/5 (Heavy images) |
 
 **Decision:** Ollama — runs completely free and offline. Docker-native with `ollama/ollama` image. Supports Llama 3.1 8B and Mistral 7B which are sufficient for generating pothole analysis reports. No API keys, no usage limits, no data privacy concerns.
 
@@ -36,11 +36,11 @@
 
 | Criteria | Custom Framework | LangGraph | CrewAI | Google ADK |
 |----------|-----------------|-----------|--------|------------|
-| **Learning Value** |  |  |  |  |
-| **Simplicity** |  |  |  |  |
-| **Dependencies** |  (Zero) |  (LangChain stack) |  (Heavy deps) |  |
-| **Customization** |  |  |  |  |
-| **Cost** |  (Free) |  (Free) |  (Free) |  (Free) |
+| **Learning Value** | 5/5 | 3/5 | 2/5 | 3/5 |
+| **Simplicity** | 5/5 | 3/5 | 3/5 | 2/5 |
+| **Dependencies** | 5/5 (Zero) | 2/5 (LangChain stack) | 2/5 (Heavy deps) | 3/5 |
+| **Customization** | 5/5 | 4/5 | 3/5 | 3/5 |
+| **Cost** | 5/5 (Free) | 5/5 (Free) | 5/5 (Free) | 5/5 (Free) |
 
 **Decision:** Custom framework — maximum learning value for internship. Building agents from scratch means understanding the agent pattern deeply (perception → reasoning → action → observation loop). No third-party dependencies to manage. Can always migrate to LangGraph later if needed.
 
@@ -52,11 +52,11 @@
 
 | Criteria | FastAPI | Django REST | Flask | Express.js |
 |----------|---------|-------------|-------|-----------|
-| **Async Support** |  (Native) |  (Partial) |  (Extensions) |  (Native) |
-| **Auto API Docs** |  (Swagger) |  (DRF) |  (Manual) |  (Manual) |
-| **Type Safety** |  (Pydantic) |  (Serializers) |  (None) |  (TypeScript) |
-| **ML Integration** |  (Same Python) |  (Same Python) |  (Same Python) |  (Different lang) |
-| **Performance** |  |  |  |  |
+| **Async Support** | 5/5 (Native) | 2/5 (Partial) | 2/5 (Extensions) | 5/5 (Native) |
+| **Auto API Docs** | 5/5 (Swagger) | 3/5 (DRF) | 2/5 (Manual) | 2/5 (Manual) |
+| **Type Safety** | 5/5 (Pydantic) | 3/5 (Serializers) | 1/5 (None) | 3/5 (TypeScript) |
+| **ML Integration** | 5/5 (Same Python) | 4/5 (Same Python) | 4/5 (Same Python) | 1/5 (Different lang) |
+| **Performance** | 5/5 | 3/5 | 3/5 | 4/5 |
 
 **Decision:** FastAPI — async by default (critical for handling image uploads + ML inference without blocking), automatic OpenAPI documentation, Pydantic validation, and same-language integration with Python ML stack. Perfect for backend learning: teaches modern API design, dependency injection, and type safety.
 
@@ -64,11 +64,11 @@
 
 | Criteria | PostgreSQL + PostGIS | MongoDB + GeoJSON | SQLite + SpatiaLite | MySQL |
 |----------|---------------------|-------------------|---------------------|-------|
-| **Geospatial Queries** |  (Native) |  (Good) |  (Limited) |  (Basic) |
-| **ACID Compliance** |  |  (Eventual) |  |  |
-| **JSON Support** |  (JSONB) |  (Native) |  |  |
-| **Industry Adoption** |  |  |  (Dev only) |  |
-| **Docker Support** |  |  | N/A (embedded) |  |
+| **Geospatial Queries** | 5/5 (Native) | 4/5 (Good) | 2/5 (Limited) | 2/5 (Basic) |
+| **ACID Compliance** | 5/5 | 2/5 (Eventual) | 4/5 | 4/5 |
+| **JSON Support** | 5/5 (JSONB) | 5/5 (Native) | 2/5 | 3/5 |
+| **Industry Adoption** | 5/5 | 4/5 | 2/5 (Dev only) | 4/5 |
+| **Docker Support** | 5/5 | 5/5 | N/A (embedded) | 5/5 |
 
 **Decision:** PostgreSQL + PostGIS — the gold standard for applications requiring both relational integrity and geospatial capabilities. PostGIS enables queries like "find all potholes within 5km" with spatial indexing. JSONB columns allow flexible storage for bounding box data and AI analysis reports without schema changes. Runs perfectly in Docker.
 
@@ -92,11 +92,11 @@
 
 | Criteria | Next.js | React (Vite) | Angular | Vue.js |
 |----------|---------|-------------|---------|--------|
-| **SSR/SSG** |  (Built-in) |  (None) |  (Universal) |  (Nuxt) |
-| **Routing** |  (File-based) |  (React Router) |  (Built-in) |  (Vue Router) |
-| **API Routes** |  (Built-in) |  (None) |  (None) |  (None) |
-| **Learning Value** |  |  |  |  |
-| **Job Market** |  |  |  |  |
+| **SSR/SSG** | 5/5 (Built-in) | 1/5 (None) | 4/5 (Universal) | 4/5 (Nuxt) |
+| **Routing** | 5/5 (File-based) | 3/5 (React Router) | 4/5 (Built-in) | 4/5 (Vue Router) |
+| **API Routes** | 5/5 (Built-in) | 1/5 (None) | 1/5 (None) | 1/5 (None) |
+| **Learning Value** | 5/5 | 4/5 | 3/5 | 4/5 |
+| **Job Market** | 5/5 | 5/5 | 4/5 | 3/5 |
 
 **Decision:** Next.js 14+ with App Router — provides SSR for SEO and initial load performance, file-based routing (no manual route configuration), built-in API routes for BFF (Backend for Frontend) pattern, and React Server Components for optimal performance. Massively popular in the 2025-26 job market.
 

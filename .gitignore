@@ -1,1 +1,89 @@
-/docs/specialization-mapping.md
+# ============================================
+# Road Pothole Detection System — .gitignore
+# Python + Node.js + Docker + ML
+# ============================================
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# ---------- Node.js ----------
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.*
+.yarn/*
+
+# ---------- IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------- Environment ----------
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ---------- ML / Data ----------
+ml/data/raw/
+ml/data/processed/
+ml/data/augmented/
+ml/models/*.pt
+ml/models/*.onnx
+ml/models/*.engine
+ml/runs/
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+wandb/
+
+# ---------- Uploads ----------
+uploads/
+media/
+
+# ---------- Docker ----------
+docker-compose.override.yml
+
+# ---------- Logs ----------
+*.log
+logs/
+
+# ---------- Testing ----------
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# ---------- Misc ----------
+*.bak
+*.tmp
+*.temp
+
+# ---------- Keep files ----------
+!.gitkeep
