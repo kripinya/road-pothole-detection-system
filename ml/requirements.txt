@@ -22,7 +22,6 @@ prometheus-fastapi-instrumentator==7.0.0
 
 #data and config
 pydantic==2.10.0
-pydantic==2.10.0
 pydantic-settings==2.6.0
 python-multipart==0.0.12
 
