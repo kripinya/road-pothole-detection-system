@@ -8,64 +8,64 @@
 
 ```mermaid
 erDiagram
-    USERS ||--o{ DETECTIONS : creates
-    USERS ||--o{ AUDIT_LOGS : generates
-    DETECTIONS ||--o| REPAIR_PRIORITIES : has
-    DETECTIONS ||--o{ AUDIT_LOGS : tracked_in
+ USERS ||--o{ DETECTIONS : creates
+ USERS ||--o{ AUDIT_LOGS : generates
+ DETECTIONS ||--o| REPAIR_PRIORITIES : has
+ DETECTIONS ||--o{ AUDIT_LOGS : tracked_in
 
-    USERS {
-        uuid id PK
-        varchar email UK
-        varchar password_hash
-        varchar full_name
-        enum role "admin | operator | viewer"
-        boolean is_active
-        timestamp created_at
-        timestamp updated_at
-    }
+ USERS {
+ uuid id PK
+ varchar email UK
+ varchar password_hash
+ varchar full_name
+ enum role "admin | operator | viewer"
+ boolean is_active
+ timestamp created_at
+ timestamp updated_at
+ }
 
-    DETECTIONS {
-        uuid id PK
-        uuid user_id FK
-        varchar image_path
-        varchar annotated_image_path
-        enum source_type "upload | video | drone"
-        float latitude
-        float longitude
-        geography location "PostGIS POINT"
-        enum severity "low | medium | high | critical"
-        float confidence_score
-        jsonb bbox_data
-        jsonb ai_analysis
-        enum status "detected | verified | repair_scheduled | resolved"
-        timestamp detected_at
-        timestamp created_at
-        timestamp updated_at
-        timestamp deleted_at "soft delete"
-    }
+ DETECTIONS {
+ uuid id PK
+ uuid user_id FK
+ varchar image_path
+ varchar annotated_image_path
+ enum source_type "upload | video | drone"
+ float latitude
+ float longitude
+ geography location "PostGIS POINT"
+ enum severity "low | medium | high | critical"
+ float confidence_score
+ jsonb bbox_data
+ jsonb ai_analysis
+ enum status "detected | verified | repair_scheduled | resolved"
+ timestamp detected_at
+ timestamp created_at
+ timestamp updated_at
+ timestamp deleted_at "soft delete"
+ }
 
-    REPAIR_PRIORITIES {
-        uuid id PK
-        uuid detection_id FK UK
-        float priority_score "0-100"
-        float estimated_cost
-        text recommended_action
-        varchar generated_by "agentic_ai_v1"
-        jsonb agent_outputs
-        timestamp created_at
-        timestamp updated_at
-    }
+ REPAIR_PRIORITIES {
+ uuid id PK
+ uuid detection_id FK UK
+ float priority_score "0-100"
+ float estimated_cost
+ text recommended_action
+ varchar generated_by "agentic_ai_v1"
+ jsonb agent_outputs
+ timestamp created_at
+ timestamp updated_at
+ }
 
-    AUDIT_LOGS {
-        uuid id PK
-        uuid user_id FK "nullable"
-        varchar action
-        varchar entity_type
-        uuid entity_id
-        jsonb details
-        inet ip_address
-        timestamp created_at
-    }
+ AUDIT_LOGS {
+ uuid id PK
+ uuid user_id FK "nullable"
+ varchar action
+ varchar entity_type
+ uuid entity_id
+ jsonb details
+ inet ip_address
+ timestamp created_at
+ }
 ```
 
 ---
@@ -78,15 +78,15 @@ Stores authenticated user accounts with role-based access.
 
 ```sql
 CREATE TABLE users (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email           VARCHAR(255) NOT NULL UNIQUE,
-    password_hash   VARCHAR(255) NOT NULL,
-    full_name       VARCHAR(255) NOT NULL,
-    role            VARCHAR(20) NOT NULL DEFAULT 'operator'
-                    CHECK (role IN ('admin', 'operator', 'viewer')),
-    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ email VARCHAR(255) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL,
+ full_name VARCHAR(255) NOT NULL,
+ role VARCHAR(20) NOT NULL DEFAULT 'operator'
+ CHECK (role IN ('admin', 'operator', 'viewer')),
+ is_active BOOLEAN NOT NULL DEFAULT TRUE,
+ created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 -- Indexes
@@ -111,26 +111,26 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE detections (
-    id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id              UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-    image_path           VARCHAR(500) NOT NULL,
-    annotated_image_path VARCHAR(500),
-    source_type          VARCHAR(20) NOT NULL DEFAULT 'upload'
-                         CHECK (source_type IN ('upload', 'video', 'drone')),
-    latitude             DOUBLE PRECISION,
-    longitude            DOUBLE PRECISION,
-    location             GEOGRAPHY(POINT, 4326),  -- PostGIS spatial type, WGS84
-    severity             VARCHAR(20)
-                         CHECK (severity IN ('low', 'medium', 'high', 'critical')),
-    confidence_score     DOUBLE PRECISION CHECK (confidence_score >= 0 AND confidence_score <= 1),
-    bbox_data            JSONB,
-    ai_analysis          JSONB,
-    status               VARCHAR(30) NOT NULL DEFAULT 'detected'
-                         CHECK (status IN ('detected', 'verified', 'repair_scheduled', 'resolved')),
-    detected_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_at           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    deleted_at           TIMESTAMP WITH TIME ZONE  -- NULL means not deleted (soft delete)
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ user_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+ image_path VARCHAR(500) NOT NULL,
+ annotated_image_path VARCHAR(500),
+ source_type VARCHAR(20) NOT NULL DEFAULT 'upload'
+ CHECK (source_type IN ('upload', 'video', 'drone')),
+ latitude DOUBLE PRECISION,
+ longitude DOUBLE PRECISION,
+ location GEOGRAPHY(POINT, 4326), -- PostGIS spatial type, WGS84
+ severity VARCHAR(20)
+ CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+ confidence_score DOUBLE PRECISION CHECK (confidence_score >= 0 AND confidence_score <= 1),
+ bbox_data JSONB,
+ ai_analysis JSONB,
+ status VARCHAR(30) NOT NULL DEFAULT 'detected'
+ CHECK (status IN ('detected', 'verified', 'repair_scheduled', 'resolved')),
+ detected_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+ created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+ deleted_at TIMESTAMP WITH TIME ZONE -- NULL means not deleted (soft delete)
 );
 
 -- Indexes
@@ -146,7 +146,7 @@ CREATE INDEX idx_detections_location ON detections USING GIST(location);
 
 -- Composite index for common queries
 CREATE INDEX idx_detections_severity_status ON detections(severity, status)
-    WHERE deleted_at IS NULL;
+ WHERE deleted_at IS NULL;
 ```
 
 **Design Decisions:**
@@ -160,46 +160,46 @@ CREATE INDEX idx_detections_severity_status ON detections(severity, status)
 **bbox_data JSON structure:**
 ```json
 {
-  "detections": [
-    {
-      "class": "pothole",
-      "confidence": 0.92,
-      "bbox": {
-        "x_min": 120,
-        "y_min": 340,
-        "x_max": 280,
-        "y_max": 450
-      }
-    }
-  ],
-  "image_width": 640,
-  "image_height": 480,
-  "model_version": "yolov8m-pothole-v1"
+ "detections": [
+ {
+ "class": "pothole",
+ "confidence": 0.92,
+ "bbox": {
+ "x_min": 120,
+ "y_min": 340,
+ "x_max": 280,
+ "y_max": 450
+ }
+ }
+ ],
+ "image_width": 640,
+ "image_height": 480,
+ "model_version": "yolov8m-pothole-v1"
 }
 ```
 
 **ai_analysis JSON structure:**
 ```json
 {
-  "perception": {
-    "estimated_size": "large",
-    "estimated_depth": "deep",
-    "road_type": "urban",
-    "surface_material": "asphalt"
-  },
-  "severity": {
-    "score": 78,
-    "classification": "high",
-    "factors": {
-      "size_score": 85,
-      "road_type_score": 70,
-      "traffic_score": 80,
-      "recurrence_score": 75
-    }
-  },
-  "report": "This is a large, deep pothole on an urban asphalt road...",
-  "pipeline_version": "agentic_ai_v1",
-  "processing_time_ms": 3200
+ "perception": {
+ "estimated_size": "large",
+ "estimated_depth": "deep",
+ "road_type": "urban",
+ "surface_material": "asphalt"
+ },
+ "severity": {
+ "score": 78,
+ "classification": "high",
+ "factors": {
+ "size_score": 85,
+ "road_type_score": 70,
+ "traffic_score": 80,
+ "recurrence_score": 75
+ }
+ },
+ "report": "This is a large, deep pothole on an urban asphalt road...",
+ "pipeline_version": "agentic_ai_v1",
+ "processing_time_ms": 3200
 }
 ```
 
@@ -209,15 +209,15 @@ Agentic AI-generated repair priority assignments.
 
 ```sql
 CREATE TABLE repair_priorities (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    detection_id        UUID NOT NULL UNIQUE REFERENCES detections(id) ON DELETE CASCADE,
-    priority_score      DOUBLE PRECISION NOT NULL CHECK (priority_score >= 0 AND priority_score <= 100),
-    estimated_cost      DOUBLE PRECISION CHECK (estimated_cost >= 0),
-    recommended_action  TEXT,
-    generated_by        VARCHAR(100) NOT NULL DEFAULT 'agentic_ai_v1',
-    agent_outputs       JSONB,
-    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ detection_id UUID NOT NULL UNIQUE REFERENCES detections(id) ON DELETE CASCADE,
+ priority_score DOUBLE PRECISION NOT NULL CHECK (priority_score >= 0 AND priority_score <= 100),
+ estimated_cost DOUBLE PRECISION CHECK (estimated_cost >= 0),
+ recommended_action TEXT,
+ generated_by VARCHAR(100) NOT NULL DEFAULT 'agentic_ai_v1',
+ agent_outputs JSONB,
+ created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 -- Indexes
@@ -237,14 +237,14 @@ Immutable audit trail for compliance and debugging.
 
 ```sql
 CREATE TABLE audit_logs (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         UUID REFERENCES users(id) ON DELETE SET NULL,
-    action          VARCHAR(100) NOT NULL,
-    entity_type     VARCHAR(50) NOT NULL,
-    entity_id       UUID,
-    details         JSONB,
-    ip_address      INET,
-    created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+ id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+ action VARCHAR(100) NOT NULL,
+ entity_type VARCHAR(50) NOT NULL,
+ entity_id UUID,
+ details JSONB,
+ ip_address INET,
+ created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 -- Indexes
@@ -282,47 +282,47 @@ CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at DESC);
 ```sql
 -- Find all potholes within 5km of a point (lat: 28.6139, lng: 77.2090 = Delhi)
 SELECT id, severity, confidence_score,
-       ST_AsGeoJSON(location) as geojson,
-       ST_Distance(location, ST_MakePoint(77.2090, 28.6139)::geography) as distance_m
+ ST_AsGeoJSON(location) as geojson,
+ ST_Distance(location, ST_MakePoint(77.2090, 28.6139)::geography) as distance_m
 FROM detections
 WHERE deleted_at IS NULL
-  AND ST_DWithin(location, ST_MakePoint(77.2090, 28.6139)::geography, 5000)
+ AND ST_DWithin(location, ST_MakePoint(77.2090, 28.6139)::geography, 5000)
 ORDER BY distance_m;
 
 -- Generate GeoJSON FeatureCollection for map overlay
 SELECT json_build_object(
-    'type', 'FeatureCollection',
-    'features', json_agg(
-        json_build_object(
-            'type', 'Feature',
-            'geometry', ST_AsGeoJSON(location)::json,
-            'properties', json_build_object(
-                'id', id,
-                'severity', severity,
-                'status', status,
-                'confidence', confidence_score,
-                'detected_at', detected_at
-            )
-        )
-    )
+ 'type', 'FeatureCollection',
+ 'features', json_agg(
+ json_build_object(
+ 'type', 'Feature',
+ 'geometry', ST_AsGeoJSON(location)::json,
+ 'properties', json_build_object(
+ 'id', id,
+ 'severity', severity,
+ 'status', status,
+ 'confidence', confidence_score,
+ 'detected_at', detected_at
+ )
+ )
+ )
 ) as geojson
 FROM detections
 WHERE deleted_at IS NULL;
 
 -- Pothole density heatmap data (grid-based aggregation)
 SELECT
-    ST_X(ST_Centroid(ST_Collect(location::geometry))) as lng,
-    ST_Y(ST_Centroid(ST_Collect(location::geometry))) as lat,
-    COUNT(*) as count
+ ST_X(ST_Centroid(ST_Collect(location::geometry))) as lng,
+ ST_Y(ST_Centroid(ST_Collect(location::geometry))) as lat,
+ COUNT(*) as count
 FROM detections
 WHERE deleted_at IS NULL
-GROUP BY ST_SnapToGrid(location::geometry, 0.01)  -- ~1km grid cells
+GROUP BY ST_SnapToGrid(location::geometry, 0.01) -- ~1km grid cells
 ORDER BY count DESC;
 
 -- Find clusters of potholes (potholes within 100m of each other)
 SELECT id, severity,
-       ST_ClusterDBSCAN(location::geometry, eps := 0.001, minpoints := 2)
-           OVER() as cluster_id
+ ST_ClusterDBSCAN(location::geometry, eps := 0.001, minpoints := 2)
+ OVER() as cluster_id
 FROM detections
 WHERE deleted_at IS NULL;
 ```
@@ -335,14 +335,14 @@ Using **Alembic** for version-controlled database migrations:
 
 ```
 alembic/
-├── env.py              # Migration environment config
-├── script.py.mako      # Migration template
+├── env.py # Migration environment config
+├── script.py.mako # Migration template
 └── versions/
-    ├── 001_create_users_table.py
-    ├── 002_create_detections_table.py
-    ├── 003_create_repair_priorities_table.py
-    ├── 004_create_audit_logs_table.py
-    └── 005_add_spatial_indexes.py
+ ├── 001_create_users_table.py
+ ├── 002_create_detections_table.py
+ ├── 003_create_repair_priorities_table.py
+ ├── 004_create_audit_logs_table.py
+ └── 005_add_spatial_indexes.py
 ```
 
 Each migration is:

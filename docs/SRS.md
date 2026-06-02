@@ -2,9 +2,9 @@
 
 ## Road Pothole Detection System — v1.0
 
-**Document Version:** 1.0  
-**Date:** June 2026  
-**Author:** Ananya Karn  
+**Document Version:** 1.0 
+**Date:** June 2026 
+**Author:** Ananya Karn 
 **Organization:** IBM (Internship Project)
 
 ---

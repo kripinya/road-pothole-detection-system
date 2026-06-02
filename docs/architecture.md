@@ -11,59 +11,59 @@ The system follows a **microservices architecture** with 9 containerized service
 ### High-Level Architecture Diagram
 
 ```
-                            ┌─────────────────────┐
-                            │     INTERNET         │
-                            │   (User Browser)     │
-                            └──────────┬───────────┘
-                                       │
-                                       │ HTTPS (443) / HTTP (80)
-                                       │
-                    ┌──────────────────▼──────────────────┐
-                    │          NGINX REVERSE PROXY         │
-                    │     (SSL Termination, Routing,       │
-                    │      Static File Serving, Gzip)      │
-                    │              Port: 80/443             │
-                    └──┬──────────────┬──────────────┬─────┘
-                       │              │              │
-           /app/*      │   /api/*     │   /ml/*      │
-                       │              │              │
-              ┌────────▼─────┐ ┌──────▼──────┐ ┌────▼────────┐
-              │   FRONTEND   │ │   BACKEND   │ │ ML SERVICE  │
-              │   Next.js    │ │   FastAPI   │ │  FastAPI    │
-              │              │ │             │ │             │
-              │ • Dashboard  │ │ • REST API  │ │ • YOLOv8   │
-              │ • Map View   │ │ • Auth/JWT  │ │ • Agents   │
-              │ • Upload     │ │ • CRUD      │ │ • Ollama   │
-              │ • Analytics  │ │ • GeoJSON   │ │   Client   │
-              │              │ │ • Metrics   │ │ • Metrics  │
-              │  Port: 3000  │ │ Port: 8000  │ │ Port: 8001 │
-              └──────────────┘ └──────┬──────┘ └──┬─────┬───┘
-                                      │           │     │
-                           ┌──────────▼───┐  ┌────▼──┐  │
-                           │  PostgreSQL  │  │ Redis │  │
-                           │  + PostGIS   │  │       │  │
-                           │              │  │ Cache │  │
-                           │  Port: 5432  │  │ Queue │  │
-                           └──────────────┘  │       │  │
-                                             │ 6379  │  │
-                                             └───────┘  │
-                                                        │
-                                              ┌─────────▼──────┐
-                                              │     OLLAMA     │
-                                              │  Llama 3.1 8B  │
-                                              │  Mistral 7B    │
-                                              │  Port: 11434   │
-                                              └────────────────┘
+ ┌─────────────────────┐
+ │ INTERNET │
+ │ (User Browser) │
+ └──────────┬───────────┘
+ │
+ │ HTTPS (443) / HTTP (80)
+ │
+ ┌──────────────────▼──────────────────┐
+ │ NGINX REVERSE PROXY │
+ │ (SSL Termination, Routing, │
+ │ Static File Serving, Gzip) │
+ │ Port: 80/443 │
+ └──┬──────────────┬──────────────┬─────┘
+ │ │ │
+ /app/* │ /api/* │ /ml/* │
+ │ │ │
+ ┌────────▼─────┐ ┌──────▼──────┐ ┌────▼────────┐
+ │ FRONTEND │ │ BACKEND │ │ ML SERVICE │
+ │ Next.js │ │ FastAPI │ │ FastAPI │
+ │ │ │ │ │ │
+ │ • Dashboard │ │ • REST API │ │ • YOLOv8 │
+ │ • Map View │ │ • Auth/JWT │ │ • Agents │
+ │ • Upload │ │ • CRUD │ │ • Ollama │
+ │ • Analytics │ │ • GeoJSON │ │ Client │
+ │ │ │ • Metrics │ │ • Metrics │
+ │ Port: 3000 │ │ Port: 8000 │ │ Port: 8001 │
+ └──────────────┘ └──────┬──────┘ └──┬─────┬───┘
+ │ │ │
+ ┌──────────▼───┐ ┌────▼──┐ │
+ │ PostgreSQL │ │ Redis │ │
+ │ + PostGIS │ │ │ │
+ │ │ │ Cache │ │
+ │ Port: 5432 │ │ Queue │ │
+ └──────────────┘ │ │ │
+ │ 6379 │ │
+ └───────┘ │
+ │
+ ┌─────────▼──────┐
+ │ OLLAMA │
+ │ Llama 3.1 8B │
+ │ Mistral 7B │
+ │ Port: 11434 │
+ └────────────────┘
 
-        ┌──────────────┐    ┌──────────────┐
-        │  PROMETHEUS  │───▶│   GRAFANA    │
-        │  Port: 9090  │    │  Port: 3001  │
-        │              │    │              │
-        │ Scrapes:     │    │ Dashboards:  │
-        │ • Backend    │    │ • API Perf   │
-        │ • ML Service │    │ • ML Metrics │
-        │ • Node Exp.  │    │ • System     │
-        └──────────────┘    └──────────────┘
+ ┌──────────────┐ ┌──────────────┐
+ │ PROMETHEUS │───▶│ GRAFANA │
+ │ Port: 9090 │ │ Port: 3001 │
+ │ │ │ │
+ │ Scrapes: │ │ Dashboards: │
+ │ • Backend │ │ • API Perf │
+ │ • ML Service │ │ • ML Metrics │
+ │ • Node Exp. │ │ • System │
+ └──────────────┘ └──────────────┘
 ```
 
 ---
@@ -74,47 +74,47 @@ The system follows a **microservices architecture** with 9 containerized service
 
 ```mermaid
 sequenceDiagram
-    participant U as User Browser
-    participant N as Nginx
-    participant F as Frontend (Next.js)
-    participant B as Backend (FastAPI)
-    participant ML as ML Service
-    participant O as Ollama LLM
-    participant DB as PostgreSQL
-    participant R as Redis
+ participant U as User Browser
+ participant N as Nginx
+ participant F as Frontend (Next.js)
+ participant B as Backend (FastAPI)
+ participant ML as ML Service
+ participant O as Ollama LLM
+ participant DB as PostgreSQL
+ participant R as Redis
 
-    U->>N: POST /api/v1/detections (image + GPS)
-    N->>B: Forward to Backend
-    B->>B: Validate JWT token
-    B->>B: Save image to storage
-    B->>R: Queue ML task
-    B->>U: 202 Accepted (task_id)
+ U->>N: POST /api/v1/detections (image + GPS)
+ N->>B: Forward to Backend
+ B->>B: Validate JWT token
+ B->>B: Save image to storage
+ B->>R: Queue ML task
+ B->>U: 202 Accepted (task_id)
 
-    R->>B: Worker picks up task
-    B->>ML: POST /detect (image)
-    ML->>ML: YOLOv8 inference
-    ML-->>B: Bounding boxes + confidence
+ R->>B: Worker picks up task
+ B->>ML: POST /detect (image)
+ ML->>ML: YOLOv8 inference
+ ML-->>B: Bounding boxes + confidence
 
-    B->>ML: POST /analyze (detection data)
-    ML->>ML: Perception Agent
-    ML->>ML: Severity Agent
-    ML->>ML: Prioritization Agent
-    ML->>O: Generate report (prompt)
-    O-->>ML: Natural language report
-    ML-->>B: Complete analysis
+ B->>ML: POST /analyze (detection data)
+ ML->>ML: Perception Agent
+ ML->>ML: Severity Agent
+ ML->>ML: Prioritization Agent
+ ML->>O: Generate report (prompt)
+ O-->>ML: Natural language report
+ ML-->>B: Complete analysis
 
-    B->>DB: INSERT detection record
-    B->>R: Publish update event
+ B->>DB: INSERT detection record
+ B->>R: Publish update event
 
-    U->>N: GET /api/v1/detections/{id}
-    N->>B: Forward
-    B->>DB: SELECT detection
-    B-->>U: Detection with bbox + severity + report
+ U->>N: GET /api/v1/detections/{id}
+ N->>B: Forward
+ B->>DB: SELECT detection
+ B-->>U: Detection with bbox + severity + report
 
-    U->>N: GET /api/v1/map/potholes
-    N->>B: Forward
-    B->>DB: SELECT with PostGIS
-    B-->>U: GeoJSON feature collection
+ U->>N: GET /api/v1/map/potholes
+ N->>B: Forward
+ B->>DB: SELECT with PostGIS
+ B-->>U: GeoJSON feature collection
 ```
 
 ### 2.2 Internal Network Topology
@@ -123,22 +123,22 @@ sequenceDiagram
 Docker Network: pothole-network (bridge)
 
 ┌─────────────────────────────────────────────────────────┐
-│                    pothole-network                       │
-│                                                         │
-│  frontend:3000  ←→  nginx:80                            │
-│  backend:8000   ←→  nginx:80                            │
-│  ml-service:8001 ←→ backend:8000                        │
-│  postgres:5432  ←→  backend:8000, ml-service:8001       │
-│  redis:6379     ←→  backend:8000                        │
-│  ollama:11434   ←→  ml-service:8001                     │
-│  prometheus:9090 ←→ backend:8000, ml-service:8001       │
-│  grafana:3001   ←→  prometheus:9090                     │
-│                                                         │
-│  External exposure (via Nginx):                         │
-│  • Port 80/443 → Nginx                                  │
-│  • Port 3001   → Grafana (optional)                     │
-│                                                         │
-│  All other ports internal only                          │
+│ pothole-network │
+│ │
+│ frontend:3000 ←→ nginx:80 │
+│ backend:8000 ←→ nginx:80 │
+│ ml-service:8001 ←→ backend:8000 │
+│ postgres:5432 ←→ backend:8000, ml-service:8001 │
+│ redis:6379 ←→ backend:8000 │
+│ ollama:11434 ←→ ml-service:8001 │
+│ prometheus:9090 ←→ backend:8000, ml-service:8001 │
+│ grafana:3001 ←→ prometheus:9090 │
+│ │
+│ External exposure (via Nginx): │
+│ • Port 80/443 → Nginx │
+│ • Port 3001 → Grafana (optional) │
+│ │
+│ All other ports internal only │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -243,34 +243,34 @@ Docker Network: pothole-network (bridge)
 
 ```
 Image Upload → Backend validates → Store image on disk
-                                 → Queue ML task in Redis
-                                 → Worker calls ML Service
-                                 → ML runs YOLOv8 → returns bbox
-                                 → ML runs Agentic AI → returns analysis
-                                 → Backend stores in PostgreSQL
-                                 → Client polls / WebSocket update
+ → Queue ML task in Redis
+ → Worker calls ML Service
+ → ML runs YOLOv8 → returns bbox
+ → ML runs Agentic AI → returns analysis
+ → Backend stores in PostgreSQL
+ → Client polls / WebSocket update
 ```
 
 ### 4.2 Read Path (Map / Dashboard)
 
 ```
 Client requests → Nginx routes to Backend
-                → Backend queries PostgreSQL (with PostGIS for geo)
-                → Redis cache check (hit → return cached)
-                → Database query → format as GeoJSON
-                → Cache result in Redis (TTL: 5min)
-                → Return to client
+ → Backend queries PostgreSQL (with PostGIS for geo)
+ → Redis cache check (hit → return cached)
+ → Database query → format as GeoJSON
+ → Cache result in Redis (TTL: 5min)
+ → Return to client
 ```
 
 ### 4.3 Agentic AI Pipeline Flow
 
 ```
 Detection Data → Orchestrator
-              → Agent 1: Perception (image analysis)
-              → Agent 2: Severity (multi-criteria scoring)
-              → Agent 3: Prioritization (global ranking)
-              → Agent 4: Reporting (Ollama LLM call)
-              → Store all outputs → Return combined result
+ → Agent 1: Perception (image analysis)
+ → Agent 2: Severity (multi-criteria scoring)
+ → Agent 3: Prioritization (global ranking)
+ → Agent 4: Reporting (Ollama LLM call)
+ → Store all outputs → Return combined result
 ```
 
 ---
@@ -279,30 +279,30 @@ Detection Data → Orchestrator
 
 ```
 ┌─────────────────────────────────────────┐
-│              SECURITY LAYERS             │
-│                                          │
-│  Layer 1: NGINX                          │
-│  ├── SSL/TLS termination (HTTPS)         │
-│  ├── Rate limiting (10 req/sec/IP)       │
-│  ├── Request size limits (10MB)          │
-│  └── Security headers (CSP, HSTS, etc.) │
-│                                          │
-│  Layer 2: BACKEND (FastAPI)              │
-│  ├── JWT authentication (Bearer token)   │
-│  ├── RBAC (admin/operator/viewer)        │
-│  ├── CORS (allowed origins only)         │
-│  ├── Input validation (Pydantic)         │
-│  └── SQL injection prevention (ORM)      │
-│                                          │
-│  Layer 3: DATABASE                       │
-│  ├── Password hashing (bcrypt, cost 12)  │
-│  ├── Internal network only (no external) │
-│  └── Parameterized queries (SQLAlchemy)  │
-│                                          │
-│  Layer 4: DOCKER NETWORK                 │
-│  ├── Internal bridge network             │
-│  ├── Only Nginx exposed to host          │
-│  └── Service-to-service via DNS names    │
+│ SECURITY LAYERS │
+│ │
+│ Layer 1: NGINX │
+│ ├── SSL/TLS termination (HTTPS) │
+│ ├── Rate limiting (10 req/sec/IP) │
+│ ├── Request size limits (10MB) │
+│ └── Security headers (CSP, HSTS, etc.) │
+│ │
+│ Layer 2: BACKEND (FastAPI) │
+│ ├── JWT authentication (Bearer token) │
+│ ├── RBAC (admin/operator/viewer) │
+│ ├── CORS (allowed origins only) │
+│ ├── Input validation (Pydantic) │
+│ └── SQL injection prevention (ORM) │
+│ │
+│ Layer 3: DATABASE │
+│ ├── Password hashing (bcrypt, cost 12) │
+│ ├── Internal network only (no external) │
+│ └── Parameterized queries (SQLAlchemy) │
+│ │
+│ Layer 4: DOCKER NETWORK │
+│ ├── Internal bridge network │
+│ ├── Only Nginx exposed to host │
+│ └── Service-to-service via DNS names │
 └─────────────────────────────────────────┘
 ```
 

@@ -21,41 +21,41 @@ The Agentic AI system is a **custom-built multi-agent pipeline** that autonomous
 ## 2. Pipeline Architecture
 
 ```
-                    ┌──────────────────────────────────────────┐
-                    │           ORCHESTRATOR                    │
-                    │  (Manages flow, retries, logging)         │
-                    │                                          │
-                    │   Input: Detection record + image data    │
-                    │                                          │
-                    │   ┌─────────────────────────────────┐    │
-                    │   │   1. PERCEPTION AGENT            │    │
-                    │   │   Analyzes visual characteristics │    │
-                    │   │   Output → perception_report      │    │
-                    │   └──────────────┬──────────────────┘    │
-                    │                  │                        │
-                    │                  ▼                        │
-                    │   ┌─────────────────────────────────┐    │
-                    │   │   2. SEVERITY AGENT              │    │
-                    │   │   Multi-criteria scoring          │    │
-                    │   │   Output → severity_result        │    │
-                    │   └──────────────┬──────────────────┘    │
-                    │                  │                        │
-                    │                  ▼                        │
-                    │   ┌─────────────────────────────────┐    │
-                    │   │   3. PRIORITIZATION AGENT        │    │
-                    │   │   Global ranking & clustering     │    │
-                    │   │   Output → priority_result        │    │
-                    │   └──────────────┬──────────────────┘    │
-                    │                  │                        │
-                    │                  ▼                        │
-                    │   ┌─────────────────────────────────┐    │
-                    │   │   4. REPORTING AGENT             │    │
-                    │   │   LLM-powered report generation   │    │
-                    │   │   Output → report_text            │    │
-                    │   └─────────────────────────────────┘    │
-                    │                                          │
-                    │   Output: Combined analysis record        │
-                    └──────────────────────────────────────────┘
+ ┌──────────────────────────────────────────┐
+ │ ORCHESTRATOR │
+ │ (Manages flow, retries, logging) │
+ │ │
+ │ Input: Detection record + image data │
+ │ │
+ │ ┌─────────────────────────────────┐ │
+ │ │ 1. PERCEPTION AGENT │ │
+ │ │ Analyzes visual characteristics │ │
+ │ │ Output → perception_report │ │
+ │ └──────────────┬──────────────────┘ │
+ │ │ │
+ │ ▼ │
+ │ ┌─────────────────────────────────┐ │
+ │ │ 2. SEVERITY AGENT │ │
+ │ │ Multi-criteria scoring │ │
+ │ │ Output → severity_result │ │
+ │ └──────────────┬──────────────────┘ │
+ │ │ │
+ │ ▼ │
+ │ ┌─────────────────────────────────┐ │
+ │ │ 3. PRIORITIZATION AGENT │ │
+ │ │ Global ranking & clustering │ │
+ │ │ Output → priority_result │ │
+ │ └──────────────┬──────────────────┘ │
+ │ │ │
+ │ ▼ │
+ │ ┌─────────────────────────────────┐ │
+ │ │ 4. REPORTING AGENT │ │
+ │ │ LLM-powered report generation │ │
+ │ │ Output → report_text │ │
+ │ └─────────────────────────────────┘ │
+ │ │
+ │ Output: Combined analysis record │
+ └──────────────────────────────────────────┘
 ```
 
 ---
@@ -69,34 +69,34 @@ Every agent implements a common interface:
 ```python
 # Abstract base for all agents
 class BaseAgent:
-    name: str                    # Agent identifier
-    description: str             # What this agent does
-    version: str                 # Semantic version
+ name: str # Agent identifier
+ description: str # What this agent does
+ version: str # Semantic version
 
-    async def execute(self, context: AgentContext) -> AgentResult:
-        """Execute the agent's task. Must be implemented by subclasses."""
-        ...
+ async def execute(self, context: AgentContext) -> AgentResult:
+ """Execute the agent's task. Must be implemented by subclasses."""
+ ...
 
-    async def validate_input(self, context: AgentContext) -> bool:
-        """Validate that required inputs are present."""
-        ...
+ async def validate_input(self, context: AgentContext) -> bool:
+ """Validate that required inputs are present."""
+ ...
 
 # Shared data structures
 class AgentContext:
-    detection_id: str
-    image_path: str
-    bbox_data: dict
-    latitude: float | None
-    longitude: float | None
-    previous_results: dict       # Results from previous agents in pipeline
-    metadata: dict               # Additional context (model version, etc.)
+ detection_id: str
+ image_path: str
+ bbox_data: dict
+ latitude: float | None
+ longitude: float | None
+ previous_results: dict # Results from previous agents in pipeline
+ metadata: dict # Additional context (model version, etc.)
 
 class AgentResult:
-    agent_name: str
-    status: str                  # "success" | "failed" | "skipped"
-    data: dict                   # Agent-specific output
-    execution_time_ms: int
-    error: str | None
+ agent_name: str
+ status: str # "success" | "failed" | "skipped"
+ data: dict # Agent-specific output
+ execution_time_ms: int
+ error: str | None
 ```
 
 ---
@@ -122,27 +122,27 @@ class AgentResult:
 5. Parse LLM response into structured format
 
 Size estimation rules:
-  - bbox_area / image_area < 0.05  → "small"
-  - bbox_area / image_area < 0.15  → "medium"
-  - bbox_area / image_area >= 0.15 → "large"
+ - bbox_area / image_area < 0.05 → "small"
+ - bbox_area / image_area < 0.15 → "medium"
+ - bbox_area / image_area >= 0.15 → "large"
 
 Depth estimation (from LLM analysis):
-  - Based on shadow patterns described by LLM
-  - Categories: "shallow", "moderate", "deep"
+ - Based on shadow patterns described by LLM
+ - Categories: "shallow", "moderate", "deep"
 ```
 
 **Output Schema:**
 ```json
 {
-  "estimated_size": "large",
-  "size_ratio": 0.18,
-  "estimated_depth": "deep",
-  "shape": "irregular",
-  "road_type": "urban",
-  "surface_condition": "cracked_asphalt",
-  "surrounding_damage": true,
-  "water_present": false,
-  "confidence": 0.85
+ "estimated_size": "large",
+ "size_ratio": 0.18,
+ "estimated_depth": "deep",
+ "shape": "irregular",
+ "road_type": "urban",
+ "surface_condition": "cracked_asphalt",
+ "surrounding_damage": true,
+ "water_present": false,
+ "confidence": 0.85
 }
 ```
 
@@ -183,10 +183,10 @@ Respond in JSON format only.
 
 ```
 severity_score = (
-    size_score      × 0.30 +    # 30% weight: pothole size
-    road_type_score × 0.20 +    # 20% weight: road importance
-    traffic_score   × 0.25 +    # 25% weight: estimated traffic
-    recurrence_score × 0.25     # 25% weight: repeated at same location?
+ size_score × 0.30 + # 30% weight: pothole size
+ road_type_score × 0.20 + # 20% weight: road importance
+ traffic_score × 0.25 + # 25% weight: estimated traffic
+ recurrence_score × 0.25 # 25% weight: repeated at same location?
 )
 ```
 
@@ -211,22 +211,22 @@ severity_score = (
 **Output Schema:**
 ```json
 {
-  "score": 78,
-  "classification": "critical",
-  "factors": {
-    "size_score": 90,
-    "road_type_score": 70,
-    "traffic_score": 70,
-    "recurrence_score": 80
-  },
-  "weights": {
-    "size": 0.30,
-    "road_type": 0.20,
-    "traffic": 0.25,
-    "recurrence": 0.25
-  },
-  "recurrence_count": 4,
-  "nearby_detections": 4
+ "score": 78,
+ "classification": "critical",
+ "factors": {
+ "size_score": 90,
+ "road_type_score": 70,
+ "traffic_score": 70,
+ "recurrence_score": 80
+ },
+ "weights": {
+ "size": 0.30,
+ "road_type": 0.20,
+ "traffic": 0.25,
+ "recurrence": 0.25
+ },
+ "recurrence_count": 4,
+ "nearby_detections": 4
 }
 ```
 
@@ -248,38 +248,38 @@ severity_score = (
 ```
 1. Fetch all active (non-resolved) detections from database
 2. Calculate priority_score for each:
-   priority_score = severity_score × 0.7 + recency_score × 0.3
-   
-   recency_score = max(0, 100 - days_since_detection × 2)
-   (newer detections get higher recency; >50 days old → 0)
+ priority_score = severity_score × 0.7 + recency_score × 0.3
+ 
+ recency_score = max(0, 100 - days_since_detection × 2)
+ (newer detections get higher recency; >50 days old → 0)
 
 3. Rank by priority_score descending
 4. Cluster nearby potholes (within 200m radius) for batch repair
 5. Estimate cost per pothole:
-   - Low severity: ₹500-1000
-   - Medium: ₹1000-3000
-   - High: ₹3000-8000
-   - Critical: ₹8000-15000
+ - Low severity: ₹500-1000
+ - Medium: ₹1000-3000
+ - High: ₹3000-8000
+ - Critical: ₹8000-15000
 ```
 
 **Output Schema:**
 ```json
 {
-  "priority_score": 82.5,
-  "rank": 3,
-  "total_active": 142,
-  "percentile": 97.9,
-  "cluster": {
-    "cluster_id": "cluster-28.61-77.21",
-    "nearby_count": 4,
-    "cluster_severity": "high",
-    "batch_repair_recommended": true
-  },
-  "cost_estimate": {
-    "individual": 12000,
-    "currency": "INR",
-    "cluster_total": 35000
-  }
+ "priority_score": 82.5,
+ "rank": 3,
+ "total_active": 142,
+ "percentile": 97.9,
+ "cluster": {
+ "cluster_id": "cluster-28.61-77.21",
+ "nearby_count": 4,
+ "cluster_severity": "high",
+ "batch_repair_recommended": true
+ },
+ "cost_estimate": {
+ "individual": 12000,
+ "currency": "INR",
+ "cluster_total": 35000
+ }
 }
 ```
 
@@ -339,15 +339,15 @@ Use a professional, factual tone suitable for a municipal engineering report.
 **Output Schema:**
 ```json
 {
-  "summary": "A large, deep pothole has been detected on an urban asphalt road...",
-  "risk_level": "HIGH",
-  "recommended_action": "Immediate patch repair within 48 hours",
-  "urgency": "urgent",
-  "cost_benefit": "Estimated repair cost of ₹12,000 is significantly lower than...",
-  "full_report": "Complete 200-word report text...",
-  "model_used": "llama3.1:8b",
-  "tokens_used": 450,
-  "generation_time_ms": 2100
+ "summary": "A large, deep pothole has been detected on an urban asphalt road...",
+ "risk_level": "HIGH",
+ "recommended_action": "Immediate patch repair within 48 hours",
+ "urgency": "urgent",
+ "cost_benefit": "Estimated repair cost of ₹12,000 is significantly lower than...",
+ "full_report": "Complete 200-word report text...",
+ "model_used": "llama3.1:8b",
+ "tokens_used": 450,
+ "generation_time_ms": 2100
 }
 ```
 
@@ -359,52 +359,52 @@ Use a professional, factual tone suitable for a municipal engineering report.
 
 ```python
 class PipelineOrchestrator:
-    """Manages sequential execution of all agents."""
+ """Manages sequential execution of all agents."""
 
-    agents = [
-        PerceptionAgent(),
-        SeverityAgent(),
-        PrioritizationAgent(),
-        ReportingAgent(),
-    ]
+ agents = [
+ PerceptionAgent(),
+ SeverityAgent(),
+ PrioritizationAgent(),
+ ReportingAgent(),
+ ]
 
-    async def run(self, detection_data: dict) -> PipelineResult:
-        context = AgentContext(detection_data)
-        results = {}
+ async def run(self, detection_data: dict) -> PipelineResult:
+ context = AgentContext(detection_data)
+ results = {}
 
-        for agent in self.agents:
-            try:
-                # Validate input
-                if not await agent.validate_input(context):
-                    results[agent.name] = AgentResult(status="skipped")
-                    continue
+ for agent in self.agents:
+ try:
+ # Validate input
+ if not await agent.validate_input(context):
+ results[agent.name] = AgentResult(status="skipped")
+ continue
 
-                # Execute with timeout
-                result = await asyncio.wait_for(
-                    agent.execute(context),
-                    timeout=30.0  # 30 second timeout per agent
-                )
-                results[agent.name] = result
-                context.previous_results[agent.name] = result.data
+ # Execute with timeout
+ result = await asyncio.wait_for(
+ agent.execute(context),
+ timeout=30.0 # 30 second timeout per agent
+ )
+ results[agent.name] = result
+ context.previous_results[agent.name] = result.data
 
-            except asyncio.TimeoutError:
-                results[agent.name] = AgentResult(status="timeout")
-                # Continue to next agent — don't fail entire pipeline
+ except asyncio.TimeoutError:
+ results[agent.name] = AgentResult(status="timeout")
+ # Continue to next agent — don't fail entire pipeline
 
-            except Exception as e:
-                # Retry once
-                try:
-                    result = await agent.execute(context)
-                    results[agent.name] = result
-                except Exception:
-                    results[agent.name] = AgentResult(status="failed", error=str(e))
-                    # Continue — graceful degradation
+ except Exception as e:
+ # Retry once
+ try:
+ result = await agent.execute(context)
+ results[agent.name] = result
+ except Exception:
+ results[agent.name] = AgentResult(status="failed", error=str(e))
+ # Continue — graceful degradation
 
-        return PipelineResult(
-            detection_id=detection_data["id"],
-            results=results,
-            status="complete" if all(r.status == "success" for r in results.values()) else "partial"
-        )
+ return PipelineResult(
+ detection_id=detection_data["id"],
+ results=results,
+ status="complete" if all(r.status == "success" for r in results.values()) else "partial"
+ )
 ```
 
 ### 4.2 Error Handling Strategy
@@ -425,14 +425,14 @@ Every agent execution is logged:
 
 ```json
 {
-  "timestamp": "2026-06-02T00:10:05Z",
-  "pipeline_id": "pipe-uuid",
-  "detection_id": "det-uuid",
-  "agent": "severity_agent",
-  "status": "success",
-  "execution_time_ms": 45,
-  "input_summary": { "size": "large", "road_type": "urban" },
-  "output_summary": { "score": 78, "classification": "critical" }
+ "timestamp": "2026-06-02T00:10:05Z",
+ "pipeline_id": "pipe-uuid",
+ "detection_id": "det-uuid",
+ "agent": "severity_agent",
+ "status": "success",
+ "execution_time_ms": 45,
+ "input_summary": { "size": "large", "road_type": "urban" },
+ "output_summary": { "score": 78, "classification": "critical" }
 }
 ```
 
@@ -455,15 +455,15 @@ OLLAMA_BASE_URL = "http://ollama:11434"
 # API call
 POST http://ollama:11434/api/generate
 {
-    "model": "llama3.1:8b",
-    "prompt": "...",
-    "stream": false,
-    "options": {
-        "temperature": 0.3,      # Low temp for factual output
-        "top_p": 0.9,
-        "num_predict": 500,      # Max tokens
-        "stop": ["\n\n\n"]
-    }
+ "model": "llama3.1:8b",
+ "prompt": "...",
+ "stream": false,
+ "options": {
+ "temperature": 0.3, # Low temp for factual output
+ "top_p": 0.9,
+ "num_predict": 500, # Max tokens
+ "stop": ["\n\n\n"]
+ }
 }
 ```
 
@@ -481,8 +481,8 @@ docker exec ollama ollama pull mistral:7b
 ### 5.3 Fallback Strategy
 
 ```
-Primary:   Ollama → llama3.1:8b
-Fallback:  Ollama → mistral:7b (if primary fails)
+Primary: Ollama → llama3.1:8b
+Fallback: Ollama → mistral:7b (if primary fails)
 Last resort: Template-based report (no LLM)
 ```
 
@@ -501,12 +501,12 @@ Last resort: Template-based report (no LLM)
 **Example unit test:**
 ```python
 async def test_severity_agent_critical():
-    agent = SeverityAgent()
-    context = AgentContext(
-        perception={"estimated_size": "large", "road_type": "highway"},
-        recurrence_count=5
-    )
-    result = await agent.execute(context)
-    assert result.data["classification"] == "critical"
-    assert result.data["score"] >= 76
+ agent = SeverityAgent()
+ context = AgentContext(
+ perception={"estimated_size": "large", "road_type": "highway"},
+ recurrence_count=5
+ )
+ result = await agent.execute(context)
+ assert result.data["classification"] == "critical"
+ assert result.data["score"] >= 76
 ```

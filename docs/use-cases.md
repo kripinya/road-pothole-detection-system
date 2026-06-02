@@ -22,57 +22,57 @@
 
 ```mermaid
 graph TB
-    subgraph "Road Pothole Detection System"
-        UC1["UC-01: Register Account"]
-        UC2["UC-02: Login"]
-        UC3["UC-03: Upload Pothole Image"]
-        UC4["UC-04: View Detection Results"]
-        UC5["UC-05: View Pothole Map"]
-        UC6["UC-06: View Dashboard Analytics"]
-        UC7["UC-07: Update Detection Status"]
-        UC8["UC-08: Generate Report"]
-        UC9["UC-09: Manage Users"]
-        UC10["UC-10: Monitor System Health"]
-        UC11["UC-11: Run Detection Pipeline"]
-        UC12["UC-12: Run Agentic AI Analysis"]
-        UC13["UC-13: Generate LLM Report"]
-    end
+ subgraph "Road Pothole Detection System"
+ UC1["UC-01: Register Account"]
+ UC2["UC-02: Login"]
+ UC3["UC-03: Upload Pothole Image"]
+ UC4["UC-04: View Detection Results"]
+ UC5["UC-05: View Pothole Map"]
+ UC6["UC-06: View Dashboard Analytics"]
+ UC7["UC-07: Update Detection Status"]
+ UC8["UC-08: Generate Report"]
+ UC9["UC-09: Manage Users"]
+ UC10["UC-10: Monitor System Health"]
+ UC11["UC-11: Run Detection Pipeline"]
+ UC12["UC-12: Run Agentic AI Analysis"]
+ UC13["UC-13: Generate LLM Report"]
+ end
 
-    FO["Field Operator"]
-    MA["Municipal Admin"]
-    SA["System Admin"]
-    VW["Viewer"]
-    AI["Agentic AI"]
-    ML["ML Service"]
-    LLM["Ollama LLM"]
+ FO["Field Operator"]
+ MA["Municipal Admin"]
+ SA["System Admin"]
+ VW["Viewer"]
+ AI["Agentic AI"]
+ ML["ML Service"]
+ LLM["Ollama LLM"]
 
-    FO --> UC1
-    FO --> UC2
-    FO --> UC3
-    FO --> UC4
-    FO --> UC5
+ FO --> UC1
+ FO --> UC2
+ FO --> UC3
+ FO --> UC4
+ FO --> UC5
 
-    MA --> UC2
-    MA --> UC4
-    MA --> UC5
-    MA --> UC6
-    MA --> UC7
-    MA --> UC8
+ MA --> UC2
+ MA --> UC4
+ MA --> UC5
+ MA --> UC6
+ MA --> UC7
+ MA --> UC8
 
-    SA --> UC2
-    SA --> UC9
-    SA --> UC10
+ SA --> UC2
+ SA --> UC9
+ SA --> UC10
 
-    VW --> UC2
-    VW --> UC5
-    VW --> UC6
+ VW --> UC2
+ VW --> UC5
+ VW --> UC6
 
-    UC3 --> UC11
-    UC11 --> ML
-    UC11 --> UC12
-    UC12 --> AI
-    UC12 --> UC13
-    UC13 --> LLM
+ UC3 --> UC11
+ UC11 --> ML
+ UC11 --> UC12
+ UC12 --> AI
+ UC12 --> UC13
+ UC13 --> LLM
 ```
 
 ---
