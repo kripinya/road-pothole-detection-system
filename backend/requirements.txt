@@ -1,0 +1,49 @@
+#web framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+#database
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.14.0
+
+#authentication
+python-jose[cryptography]==3.3.0 #creates and verifies jwt tokens
+passlib[bcrypt]==1.7.4 #HASHES passwords with bcrypt(one way hash, cannot be reversed)
+python-multipart==0.0.12 #parses multipart form data(used for file uploads in fastapi)
+
+# Validation & Settings
+pydantic==2.10.0 #data validation using python type hints, fastapi is built on it
+pydantic-settings==2.6.0 #loads sttings from .env files into typed python scripts
+email-validator==2.2.0 #validates emails format in registration
+
+#HTTP client
+httpx==0.28.0 #async http client, backend uses this to call the ml service internally
+
+#Redis
+redis==5.2.0 #python client redis(caching + task queue
+
+#monitoring
+prometheus-fastapi-instrumentator==7.0.0
+
+#GeoJSON
+geojson==3.2.0 #helpers for creating geojson objects for the map endpoints
+
+#Testing
+pytest==8.3.0 #test runner
+pytest-asyncio==0.24/0 #runs async tests
+httpx==0.28.0 
+coverage==7.6.0 #measures how much of code is tested
+
+#dev tools
+ruff==0.8.0 #python linter + formatter(replaces flake8, black, isort, 100x faster)
+mypy==1.13.0 #static type checker(catches bugs before runtime
+
+
+
+
+
+
+
+
+
