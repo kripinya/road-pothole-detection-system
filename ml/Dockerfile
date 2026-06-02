@@ -20,6 +20,8 @@ WORKDIR /app
 
 COPY --from=builder /root/.local /root/.local
 
+ENV PATH=/root/.local/bin:$PATH
+
 COPY . .
 
 RUN mkdir -p /app/models /app/data
