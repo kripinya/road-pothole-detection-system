@@ -1,0 +1,38 @@
+#web framework(ML service api)
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+#computer vision and deep learning
+ultralytics==8.3.0 #YOLOv8/v9 library, one line to train one line to predict, it pulls in pytorch as a dependency, but we pin it explicitly for reproducibility
+torch==2.5.0 #deep learing framework, yolo runs on it
+torchvision==0.20.0 #image transforms, pre trained model utilities.
+
+#image processing
+Pillow==11.0.0
+opencv-python-headless==4.10.0.84 #used for image preprocessing, drawing boundary lines
+
+#data augumentation
+albumentations==1.4.0 #image augumentation library to flip, rotate, add rain/fog effects to train images
+
+#HTTp client(for ollama)
+httpx==0.28.0
+
+#monitoring
+prometheus-fastapi-instrumentator==7.0.0
+
+#data and config
+pydantic==2.10.0
+pydantic==2.10.0
+pydantic-settings==2.6.0
+python-multipart==0.0.12
+
+#testing
+pytest==8.3.0
+pytest-asyncio==0.24.0
+coverage==7.6.0
+
+#dev tools
+ruff==0.8.0
+mypy==1.13.0
+
+
