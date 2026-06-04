@@ -87,5 +87,3 @@ htmlcov/
 
 # ---------- Keep files ----------
 !.gitkeep
-
-.github/workflows
