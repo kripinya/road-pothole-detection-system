@@ -21,7 +21,7 @@ format:
 
 lint:
 	ruff check .
-	mupy backend/rc ml/src
+	mypy backend/rc ml/src
 
 test:
 	pytest backend/tests ml/tests -v
