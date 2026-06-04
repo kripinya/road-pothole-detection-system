@@ -1,0 +1,52 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        run: |
+          pip install -r backend/requirements.txt
+
+      - name: Install ML dependencies
+        run: |
+          pip install torch==2.5.0+cpu torchvision==0.20.0+cpu --index-url https://download.pytorch.org/whl/cpu
+          pip install -r ml/requirements.txt
+
+      - name: Lint with ruff
+        run: ruff check backend/src ml/src
+
+      - name: Type check with mypy
+        run: mypy backend/src ml/src --ignore-missing-imports
+
+      - name: Run backend tests
+        run: pytest backend/tests -v --tb=short
+
+      - name: Run ML tests
+        run: pytest ml/tests -v --tb=short
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: docker compose build
